@@ -174,7 +174,7 @@ Technologies utilisées:
 
 * Publisher: La lecture de la température
 
-.code go-paris-meetup/temp_pub.go /START1/,/STOP1/
+.code go-paris-meetup/temp_pub.go /START3/,/STOP3/
 
 * Subscriber
 

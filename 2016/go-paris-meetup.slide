@@ -192,6 +192,10 @@ Mise en oeuvre de serveurs de messaging en Go:
 
 * Liens
 
+- Code des slides
+
+./link https://github.com/processone/talks/tree/master/2016/go-paris-meetup
+
 - Go XMPP
 
 .link https://github.com/processone/gox

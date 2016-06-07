@@ -21,21 +21,6 @@ Go est pertinent pour le messaging temps réel:
 - sur le client: objets connectés
 - sur le serveur: plate-forme de messaging
 
-* Illustration avec divers protocoles
-
-- XMPP: eXtensible Messaging and Presence Protocol
-.link http://xmpp.org
-
-- MQTT: Message Queuing Telemetry Transport
-.link http://mqtt.org
-
-- NATS: Protocole et serveur
-.link http://nats.io
-
-Cette présentation se concentre sur l'utilisation des serveurs de messaging depuis un client Go.
-
-La mise en oeuvre de serveur de messaging en pur Go viendra dans une autre présentation.
-
 * Pour les clients / objets connectés
 
 - Channels: Le passage de messages est au coeur du language Go.
@@ -71,11 +56,28 @@ gnatsd, implementation du protocole Nats.io
 .image go-paris-meetup/nats_latency.png
 .caption Source: Brave New Geek
 
+* Illustration du messaging avec divers protocoles
+
+À connaître:
+
+- XMPP: eXtensible Messaging and Presence Protocol
+.link http://xmpp.org
+
+- MQTT: Message Queuing Telemetry Transport
+.link http://mqtt.org
+
+- NATS: Protocole et serveur
+.link http://nats.io
+
+Cette présentation se concentre sur l'utilisation des serveurs de messaging depuis un client Go.
+
+La mise en œuvre de serveurs de messaging en pur Go viendra dans une autre présentation.
+
 * Code
 
 * XMPP
 
-XMPP est idéal pour le contrôle des objects.
+XMPP est idéal pour le contrôle des objets.
 
 Le protocole est extensible et propose des spécifications adaptées à l'écriture de séquences d'interaction pour le contrôle:
 

@@ -1,0 +1,204 @@
+Messaging temps réel avec Go
+
+Mickaël Rémond
+ProcessOne
+mremond@process-one.net
+http://www.process-one.net/
+@mickael
+
+* Retour d'expérience
+
+Construction d'objets connectés en Go
+
+.image go-paris-meetup/jukebox.png _ 800
+
+* Introduction: Pourquoi utiliser Go pour le messaging ?
+
+* Pertinence
+
+Go est pertinent pour le messaging temps réel:
+
+- sur le client: objets connectés
+- sur le serveur: plate-forme de messaging
+
+* Illustration avec divers protocoles
+
+- XMPP: eXtensible Messaging and Presence Protocol
+.link http://xmpp.org
+
+- MQTT: Message Queuing Telemetry Transport
+.link http://mqtt.org
+
+- NATS: Protocole et serveur
+.link http://nats.io
+
+Cette présentation se concentre sur l'utilisation des serveurs de messaging depuis un client Go.
+
+La mise en oeuvre de serveur de messaging en pur Go viendra dans une autre présentation.
+
+* Pour les clients / objets connectés
+
+- Channels: Le passage de messages est au coeur du language Go.
+- Cross compilation: Il est possible de compiler et déployer le code client sur une architecture différente.
+- Accès système: La création d'objet est simplifiée par les capacités systèmes de Go.
+
+* Pour les serveurs
+
+Performant sur deux axes:
+
+- Go routines: Connections simultanés
+Les serveurs de messagerie gèrent de nombreux processus en parallèle
+
+- Performance: Débit
+Permet de développer des systèmes ayant un fort débit en terme de nombre de messages par seconde.
+
+- Latence:
+Permet de réduire fortement la latence dans la transmission des messages.
+
+* Exemple: NATS
+
+gnatsd, implementation du protocole Nats.io
+
+.image go-paris-meetup/nats_site.png _ 650
+
+* NATS: Capacité de traitement
+
+.image go-paris-meetup/nats_throughtput.png
+.caption Source: Brave New Geek
+
+* NATS: Latence
+
+.image go-paris-meetup/nats_latency.png
+.caption Source: Brave New Geek
+
+* Code
+
+* XMPP
+
+XMPP est idéal pour le contrôle des objects.
+
+Le protocole est extensible et propose des spécifications adaptées à l'écriture de séquences d'interaction pour le contrôle:
+
+- Découverte (XEP-0347: Internet of Things - Discovery)
+- Contrôle: Requête / Réponse (XEP-0325: Internet of Things - Control)
+
+* Développement d'un Jukebox XMPP en Go
+
+Technologies utilisées:
+
+- Protocole XMPP
+- ejabberd: serveur XMPP
+- Bibliothèque XMPP en Go, Gox: écriture du Jukebox
+- Raspberry Pi 2 avec image Linux custom et haut parleur connecté à la sortie son analogique
+- Connexion à SoundCloud
+
+* Architecture
+
+.image go-paris-meetup/ejabberd_jukebox.png
+
+* Contrôle XMPP du jukebox: Chat bot
+
+- Le jukebox joue les liens Soundcloud envoyés dans le chat:
+
+  <message type="chat" to="test@localhost" id="aac9a">
+    <body>https://soundcloud.com/radiohead/spectre</body>
+  </message>
+
+- Il stoppe la musique en cours de lecture avec la commande `stop`:
+
+  <message type="chat" to="test@localhost" id="aacaa">
+    <body>stop</body>
+  </message>
+
+* Contrôle du jukebox: IoT XMPP Control
+
+- Notre jukebox peut interpréter les requêtes de commande IoT (XEP-0325):
+
+  <iq type='set'
+      to='test@localhost/jukebox'
+      id='2'>
+     <set xmlns='urn:xmpp:iot:control' xml:lang='en'>
+       <string name='action' value='play'/>
+       <string name='url' value='https://soundcloud.com/radiohead/spectre'/>
+     </set>
+  </iq>
+
+* Code du jukebox: Main receive loop
+
+Déclaration de la connection XMPP:
+
+.code go-paris-meetup/xmpp_jukebox.go /var client/,/}/
+
+Boucle de traitement des paquets XMPP:
+
+.code go-paris-meetup/xmpp_jukebox.go /for packet/,/STOPFOR/
+
+* Code du jukebox: Connexion XMPP
+
+.code go-paris-meetup/xmpp_jukebox.go /func.connectXmpp/,/STOPCONNECT/
+
+* Traitement des messsages
+
+.code go-paris-meetup/xmpp_jukebox.go /func.processMessage/,/STOPMSG/
+
+* Traitement des commandes
+
+.code go-paris-meetup/xmpp_jukebox.go /func.processIq/,/STOPIQ/
+
+* Jouer le morceau SoundCloud
+
+.code go-paris-meetup/xmpp_jukebox.go /func.playSCURL/,/}/
+
+* MQTT
+
+MQTT est idéal pour remonter l'information venant de capteurs.
+
+* Reporting d'un capteur de température
+
+Technologies utilisées:
+
+- Capteur: Températeur CPU OSX
+  sysctl -n machdep.xcpm.cpu_thermal_level
+- Serveur MQTT de test: Mosquitto
+- Bibliothèque MQTT en Go: ProcessOne MQTT
+
+* Publisher: Mise en place de la connexion
+
+.code go-paris-meetup/temp_pub.go /START1/,/STOP1/
+
+* Publisher: La boucle de publication
+
+.code go-paris-meetup/temp_pub.go /START2/,/STOP2/
+
+* Publisher: La lecture de la température
+
+.code go-paris-meetup/temp_pub.go /START1/,/STOP1/
+
+* Subscriber
+
+.code go-paris-meetup/temp_sub.go /START1/,/STOP1/
+
+* Prochaines étapes
+
+Publication du code client MQTT:
+
+- Publication pour la fin de semaine, après nettoyage et documentation, sur le [[https://github.com/processone/][compte Github de ProcessOne]]
+- Présentation de ce que j'ai appris lors du design de l'API de la bibliothèque ?
+
+Mise en oeuvre de serveurs de messaging en Go:
+
+- Présentation du serveur NATS ?: Illustration de NATS qui est un protocol non standard mais également très performant.
+- Autres serveurs de messaging en Go.
+
+* Liens
+
+- Go XMPP
+
+.link https://github.com/processone/gox
+
+- Go MQTT
+
+.link https://github.com/processone/mqtt
+
+- Brave New Geek: Dissecting Message Queues
+.link http://bravenewgeek.com/dissecting-message-queues/

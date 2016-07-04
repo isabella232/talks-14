@@ -1,0 +1,78 @@
+Phoenix Presence: Le service temps réel de Phoenix 1.2
+
+Mickaël Rémond
+ProcessOne
+mremond@process-one.net
+http://www.process-one.net/
+@mickael
+
+* Qu'est-ce que Phoenix ?
+
+- Framework de développement Web
+- Développement lancé en Août 2014 avec un focus sur les websockets
+- Inspiration venant de différents frameworks: Ruby on Rails, Clojure Ring, Scala Playframework, ...
+- Version 1.0 sortie en Août 2015.
+- Version 1.2 majeure en Juin 2016.
+
+* Les atouts de Phoenix
+
+Points forts:
+
+- *Élégance* grâce à la syntaxe d'Elixir et à son système de macros (DSL)
+- *Performance* et clustering grâce à la VM Erlang
+- *Productivité* avec des outils de base de données comme Ecto
+
+Fonctionnalités:
+
+- couvre le support des *pages*web*dynamiques*.
+- interactions *temps*réel*: websockets et presence.
+
+* Références
+
+- Présentation Meetup Paris Novembre 2015
+
+.link https://www.youtube.com/watch?v=GPF6w3CsWio
+
+- Site Web de Phoenix
+
+.link http://www.phoenixframework.org
+
+* De Phoenix 1.0 à Phoenix 1.2
+
+* Nouvelles fonctionnalités
+
+Phoenix 1.1:
+
+- Channel performance
+- Gettext localization
+
+Phoenix 1.2:
+
+- Ecto 2.0
+- Phoenix Presence
+
+* Presence vs Channels ?
+
+La fonctionnalité vient sous la forme d'un _presence_tracker_.
+
+Elle s'appuie sur les channels et ajoute une fonctionnalité de présence aux channels.
+
+* Exemple d'usage
+
+* Générer le code du module Presence
+
+.code phoenix-presence/mix-new.bash
+
+* Ajouter le presence tracker dans l'application
+
+Dans `lib/gastronokids.ex`:
+
+- Ajout du module dans l'arbre de supervision:
+
+    children = [
+      ...
+      supervisor(Gastronokids.Presence, []),
+    ]
+
+
+* Application d'exemple Gastronokids

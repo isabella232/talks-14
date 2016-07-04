@@ -139,7 +139,7 @@ Boucle de traitement des paquets XMPP:
 
 .code go-paris-meetup/xmpp_jukebox.go /func.connectXmpp/,/STOPCONNECT/
 
-* Traitement des messsages
+* Traitement des messages
 
 .code go-paris-meetup/xmpp_jukebox.go /func.processMessage/,/STOPMSG/
 

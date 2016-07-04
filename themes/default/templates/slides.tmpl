@@ -10,6 +10,9 @@
       var notesEnabled = {{.NotesEnabled}};
     </script>
     <script src='/static/slides.js'></script>
+	<link rel="stylesheet" href="/static/hightlight.css">
+	<script src="/static/jquery.min.js"></script>
+	<script src="/static/highlight.pack.js"></script>
 
     {{if .NotesEnabled}}
     <script>
@@ -96,6 +99,32 @@
         }
       })();
     </script>
+	<script>
+	  $(document).ready(function() {
+	    $('div.code pre').each(function(i, block) {
+          console.log('block:' + block);	
+	      hljs.highlightBlock(block);
+	    });
+
+	    $('button.run').hover(function(){
+	      $('.current div.code').each(function(i, code){
+	        var cp;
+	        $(code).find('pre.hljs').each(function(i, block){
+	          if ($(block).css("display") != "none") {
+	            if (typeof(cp) === "undefined" ) {
+	              cp = $(block)
+	              return true
+	            }
+	            cp.append("\n"+$(block).html());
+	            $(block).remove();
+	          }
+	        });
+	        cp.html(cp.text());
+	        hljs.highlightBlock(cp[0]);
+	      });
+	    });
+	  });
+	</script>
   </body>
 </html>
 {{end}}

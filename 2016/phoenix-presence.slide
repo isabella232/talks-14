@@ -6,12 +6,18 @@ mremond@process-one.net
 http://www.process-one.net/
 @mickael
 
+
+# ==============================================================================
+
+* Brève histoire de Phoenix
+
 * Qu'est-ce que Phoenix ?
 
 - Framework de développement Web
 - Développement lancé en Août 2014 avec un focus sur les websockets
 - Inspiration venant de différents frameworks: Ruby on Rails, Clojure Ring, Scala Playframework, ...
 - Version 1.0 sortie en Août 2015.
+- Version 1.1 en Décembre 2015.
 - Version 1.2 majeure en Juin 2016.
 
 * Les atouts de Phoenix
@@ -27,52 +33,241 @@ Fonctionnalités:
 - couvre le support des *pages*web*dynamiques*.
 - interactions *temps*réel*: websockets et presence.
 
+* De Phoenix 1.0 à Phoenix 1.2
+
+Phoenix 1.1:
+
+- Amélioration des performances des channels
+- Localisation via Gettext
+
+Phoenix 1.2:
+
+- Ecto 2.0
+: Ecto: Database wrapper and language integrated query for Elixir
+- Phoenix Presence
+: Phoenix Presence: Tool to write presence based systems in Elixir
+
 * Références
 
-- Présentation Meetup Paris Novembre 2015
+- Introduction au développement Web avec le framework Phoenix
 
 .link https://www.youtube.com/watch?v=GPF6w3CsWio
+
+: Présentation Paris.ex Novembre 2015
 
 - Site Web de Phoenix
 
 .link http://www.phoenixframework.org
 
-* De Phoenix 1.0 à Phoenix 1.2
+# ==============================================================================
 
-* Nouvelles fonctionnalités
+* Websockets, Channels, Presence: Les concepts
 
-Phoenix 1.1:
+* Définitions
 
-- Channel performance
-- Gettext localization
+- *Websockets*: protocole de communication entre le navigateur et le serveur. Maintient la connection pendant la durée de la session.
 
-Phoenix 1.2:
+- *Channels*: Les channels définisset le comportement du serveur pour le broadcast de message en temps réel, par "sujet" (_topic_).
 
-- Ecto 2.0
-- Phoenix Presence
+- *Presence*: Le module de "presence tracker synchronize l'état des join et des leaves de sur les topics, via le module channel, et broadcast les changements.
+
+* Architecture
+
+.image phoenix-presence/phoenix-presence.png _ 600
 
 * Presence vs Channels ?
 
-La fonctionnalité vient sous la forme d'un _presence_tracker_.
+La fonctionnalité de Phoenix Presence vient sous la forme d'un _presence_tracker_.
 
-Elle s'appuie sur les channels et ajoute une fonctionnalité de présence aux channels.
+Il s'agit d'une *structure*de*données*en*mémoire*, répliquée et synchronisé en
+temps réel sur tous les noeuds d'un cluster Elixir.
 
-* Exemple d'usage
+Elle s'appuie sur les channels:
+
+- pour recevoir les événements de _join_ et de _leave_.
+- pour envoyer l'état initial et les mises à jour incrémentales.
+
+Phoenix Presence permet:
+
+- la découverte de service / composants du système.
+- la gestion de la présence des utilisateurs.
+
+* Points forts de Phoenix Presence
+
+Robustesse:
+
+- *Réplication* en temps réel sur l'ensemble du cluster.
+- *pas*de*point*de*failure*unique* (SPOF).
+- peut continuer à fonctionner lors d'un *netsplit*.
+- supporte de forte charge.
+
+Simplicité:
+
+- *de*gestion*: gère la réconciliation automatiquement lorsque le cluster se reconstitue.
+- *de*déploiement*: dépend uniquement de module standard, sans dépendances externe.
+- *d'implémentation*: est fourni avec un module Javascript pour faciliter l'implémentation des clients.
+
+* Limitations
+
+Phoenix Presence est une structure de données distribué. Les fonctionnalités restent d'assez *bas*niveau*.
+
+Il est idéal pour gérer la présence en temps réel pour des communautés:
+
+- Site web
+- Jeu vidéo
+
+Il reste un système *simple*, fonctionnant sur la base de topic et de channels:
+
+- Pas de liste de contacts / présence individuelle.
+
+# ==============================================================================
+
+* Mise en œuvre
+
+* L'exemple Gastronokids
+
+Application d'illustration utilisée dans ma précédente présentation sur Phoenix.
+
+.link https://github.com/ElixirParis/gastronokids
+
+Enrichissement pour ajouter un module de présence.
+
+* Etape 1: Mise à jour de Phoenix 1.0 à Phoenix 1.2
+
+* Changements
+
+Résumé:
+
+- Migration vers Postgres: SQLite Ecto ne fonctionne pas encore avec Ecto 2.0
+
+- Mise à jour des dépendences Elixir et Javascript
+
+- Mise à jour vers Ecto 2.0: Model -> Schema
+
+- Ajout du support de la localisation Gettext
+
+- Changement du code de gestion des erreurs dans les formulaires
+
+Commit complet:
+
+.link https://github.com/ElixirParis/gastronokids/commit/418e10926c7e647b47628d2006a91123496a57da Github: Migrate for Phoenix 1.0 to Phoenix 1.2 + move to Postgres
+
+* Etape 2: Ajout du module de présence
 
 * Générer le code du module Presence
 
+Utilisation du scaffolding pour générer le code:
+
 .code phoenix-presence/mix-new.bash
 
-* Ajouter le presence tracker dans l'application
+Nous utilisons le module en l'état.
 
-Dans `lib/gastronokids.ex`:
+* Configuration
 
-- Ajout du module dans l'arbre de supervision:
+* Ajouter le service de presence dans l'application
 
-    children = [
-      ...
-      supervisor(Gastronokids.Presence, []),
-    ]
+Dans `lib/gastronokids.ex`, ajout du module dans l'arbre de supervision:
 
+.code phoenix-presence/gastronokids.ex /def start/,/end$/
 
-* Application d'exemple Gastronokids
+* Config PubSub
+
+Vérifier que le service PubSub est bien configuré dans `config/config.exs`:
+
+.code phoenix-presence/config.exs /config :gastronokids, Gastronokids.Endpoint,/,/PG2]/
+
+* room_channel.ex
+
+* Lier la présence aux channels (1/2)
+
+Importer notre module de présence dans `web/channel/room_channel.ex`:
+
+.code phoenix-presence/room_channel.ex /defmodule/,/Gastronokids.Presence/
+
+Déclencher un événement de join asynchrone:
+
+.code phoenix-presence/room_channel.ex /def join/,/ENDJOIN/
+
+* Lier la présence aux channels (2/2)
+
+Garder la trace de la présence après le join et broadcast de la liste initiale:
+
+.code phoenix-presence/room_channel.ex /def handle_info/,/end$/
+
+*Note:* Il n'est pas nécessaire de gérer la déconnexion / leave. Channels et Presence gère cela pour le développeur.
+
+* Broadcast des messages de chat
+
+Le callback `handle_in` sert toujours à assurer la diffusion des messages de chat:
+
+.code phoenix-presence/room_channel.ex /def handle_in\("new_msg"/,/end$/
+
+Le callback `handle_out` n'est pas nécessaire car nous utilisons l'implémentation par défaut.
+
+* user_socket.ex
+
+* Assigner le user_id à la socket
+
+Nous étendons la fonction `connect/2` dans `web/channels/user_socket.ex`:
+
+.code phoenix-presence/user_socket.ex /def connect/,/end$/
+
+* Le client Javascript socket.js
+
+* Mise en place socket / presence
+
+Dans `web/static/js/socket.js`, nous importons Socket et Presence, et créons une nouvelle socket:
+
+.code phoenix-presence/socket.js /^import/,/window.userId/
+
+Nous lançons la connexion et initialons l'environnement:
+
+.code phoenix-presence/socket.js /socket.connect/,/let presences/
+
+* Gestion des événements de présence
+
+La lib Phoenix Presence Javascript gère l'état des présences pour le développeur:
+
+.code phoenix-presence/socket.js /PRES_START/,/PRES_END/
+
+* Afficher la liste de présence
+
+La lib Phoenix Presence Javascript permet de récupérer et trier la liste des présences:
+
+.code phoenix-presence/socket.js /REND_START/,/REND_END/
+
+* Gestion des messages
+
+Pour finir, nous gérer la réception et l'envoi des messages:
+
+.code phoenix-presence/socket.js /MSG_START/,/MSG_END/
+
+* L'interface utilisateur
+
+* Mise en place du code HTML
+
+Notre code fournit des éléments conteneurs pour les utilisateurs présent et le chat:
+
+.code phoenix-presence/app.html.eex /Online Users:/,/ <\/div>/
+
+Pour simplifier, le nom de l'utilisateur vient des paramètres de la page:
+
+.code phoenix-presence/app.html.eex /<script>/,/<\/script>/
+
+* Télécharger le code
+
+Github Gastronokids
+
+.link https://github.com/ElixirParis/gastronokids
+
+* Conclusion
+
+L'ajout du module de Presence complète les channels de Phoenix de manière redoutablement efficace.
+
+Avec cet ajout, Phoenix devient l'outil le plus complet pour implémenter des applications web temps réel reliant:
+
+- Base de données.
+- Système de templating de pages.
+- Mise à jour temps réel via un outillage Javascript complet.
+
+Et tout cela, dans un package unique, sans dépendance.

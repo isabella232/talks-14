@@ -14,11 +14,11 @@ http://www.process-one.net/
 * Qu'est-ce que Phoenix ?
 
 - Framework de développement Web
-- Développement lancé en Août 2014 avec un focus sur les websockets
+- Développement lancé en août 2014 avec un focus sur les websockets
 - Inspiration venant de différents frameworks: Ruby on Rails, Clojure Ring, Scala Playframework, ...
-- Version 1.0 sortie en Août 2015.
-- Version 1.1 en Décembre 2015.
-- Version 1.2 majeure en Juin 2016.
+- Version 1.0 sortie en août 2015.
+- Version 1.1 en décembre 2015.
+- Version 1.2 majeure en juin 2016.
 
 * Les atouts de Phoenix
 
@@ -53,7 +53,7 @@ Phoenix 1.2:
 
 .link https://www.youtube.com/watch?v=GPF6w3CsWio
 
-: Présentation Paris.ex Novembre 2015
+: Présentation Paris.ex novembre 2015
 
 - Site Web de Phoenix
 
@@ -65,11 +65,11 @@ Phoenix 1.2:
 
 * Définitions
 
-- *Websockets*: protocole de communication entre le navigateur et le serveur. Maintient la connection pendant la durée de la session.
+- *Websockets*: protocole de communication entre le navigateur et le serveur. Maintiens la connexion pendant la durée de la session.
 
 - *Channels*: Les channels définisset le comportement du serveur pour le broadcast de message en temps réel, par "sujet" (_topic_).
 
-- *Presence*: Le module de "presence tracker synchronize l'état des join et des leaves de sur les topics, via le module channel, et broadcast les changements.
+- *Presence*: Le module de "présence tracker synchronize l'état des joins et des leaves de sur les topics, via le module channel, et broadcast les changements.
 
 * Architecture
 
@@ -79,7 +79,7 @@ Phoenix 1.2:
 
 La fonctionnalité de Phoenix Presence vient sous la forme d'un _presence_tracker_.
 
-Il s'agit d'une *structure*de*données*en*mémoire*, répliquée et synchronisé en
+Il s'agit d'une *structure*de*données*en*mémoire*, répliquée et synchronisée en
 temps réel sur tous les noeuds d'un cluster Elixir.
 
 Elle s'appuie sur les channels:
@@ -99,17 +99,17 @@ Robustesse:
 - *Réplication* en temps réel sur l'ensemble du cluster.
 - *pas*de*point*de*failure*unique* (SPOF).
 - peut continuer à fonctionner lors d'un *netsplit*.
-- supporte de forte charge.
+- supporte de fortes charges.
 
 Simplicité:
 
 - *de*gestion*: gère la réconciliation automatiquement lorsque le cluster se reconstitue.
-- *de*déploiement*: dépend uniquement de module standard, sans dépendances externe.
+- *de*déploiement*: dépends uniquement de module standard, sans dépendance externe.
 - *d'implémentation*: est fourni avec un module Javascript pour faciliter l'implémentation des clients.
 
 * Limitations
 
-Phoenix Presence est une structure de données distribué. Les fonctionnalités restent d'assez *bas*niveau*.
+Phoenix Presence est une structure de données distribuée. Les fonctionnalités restent d'assez *bas*niveau*.
 
 Il est idéal pour gérer la présence en temps réel pour des communautés:
 
@@ -132,7 +132,7 @@ Application d'illustration utilisée dans ma précédente présentation sur Phoe
 
 Enrichissement pour ajouter un module de présence.
 
-* Etape 1: Mise à jour de Phoenix 1.0 à Phoenix 1.2
+* Étape 1: Mise à jour de Phoenix 1.0 à Phoenix 1.2
 
 * Changements
 
@@ -140,7 +140,7 @@ Résumé:
 
 - Migration vers Postgres: SQLite Ecto ne fonctionne pas encore avec Ecto 2.0
 
-- Mise à jour des dépendences Elixir et Javascript
+- Mise à jour des dépendances Elixir et Javascript
 
 - Mise à jour vers Ecto 2.0: Model -> Schema
 
@@ -152,7 +152,7 @@ Commit complet:
 
 .link https://github.com/ElixirParis/gastronokids/commit/418e10926c7e647b47628d2006a91123496a57da Github: Migrate for Phoenix 1.0 to Phoenix 1.2 + move to Postgres
 
-* Etape 2: Ajout du module de présence
+* Étape 2: Ajout du module de présence
 
 * Générer le code du module Presence
 
@@ -164,7 +164,7 @@ Nous utilisons le module en l'état.
 
 * Configuration
 
-* Ajouter le service de presence dans l'application
+* Ajouter le service de présence dans l'application
 
 Dans `lib/gastronokids.ex`, ajout du module dans l'arbre de supervision:
 
@@ -194,7 +194,7 @@ Garder la trace de la présence après le join et broadcast de la liste initiale
 
 .code phoenix-presence/room_channel.ex /def handle_info/,/end$/
 
-*Note:* Il n'est pas nécessaire de gérer la déconnexion / leave. Channels et Presence gère cela pour le développeur.
+*Note:* Il n'est pas nécessaire de gérer la déconnexion / leave. Channels et Presence gèrent cela pour le développeur.
 
 * Broadcast des messages de chat
 
@@ -202,7 +202,7 @@ Le callback `handle_in` sert toujours à assurer la diffusion des messages de ch
 
 .code phoenix-presence/room_channel.ex /def handle_in\("new_msg"/,/end$/
 
-Le callback `handle_out` n'est pas nécessaire car nous utilisons l'implémentation par défaut.
+Le callback `handle_out` n'est pas nécessaire, car nous utilisons l'implémentation par défaut.
 
 * user_socket.ex
 
@@ -214,7 +214,7 @@ Nous étendons la fonction `connect/2` dans `web/channels/user_socket.ex`:
 
 * Le client Javascript socket.js
 
-* Mise en place socket / presence
+* Mise en place socket / présence
 
 Dans `web/static/js/socket.js`, nous importons Socket et Presence, et créons une nouvelle socket:
 
@@ -246,7 +246,7 @@ Pour finir, nous gérer la réception et l'envoi des messages:
 
 * Mise en place du code HTML
 
-Notre code fournit des éléments conteneurs pour les utilisateurs présent et le chat:
+Notre code fournit des éléments conteneurs pour les utilisateurs présents et le chat:
 
 .code phoenix-presence/app.html.eex /Online Users:/,/ <\/div>/
 

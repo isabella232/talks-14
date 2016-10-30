@@ -14,3 +14,6 @@ present -notes -base=themes/default/
 ```
 
 Omit base option to use default theme.
+
+Export the presentation from Chrome browser, by using Print / Save as PDF
+option.

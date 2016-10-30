@@ -17,3 +17,4 @@ Omit base option to use default theme.
 
 Export the presentation from Chrome browser, by using Print / Save as PDF
 option.
+You can export it to images with right margin with PDF Toolkit+.

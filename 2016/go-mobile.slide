@@ -1,0 +1,102 @@
+Expérimentation avec Go Mobile
+
+Mickaël Rémond
+ProcessOne
+mremond@process-one.net
+http://www.process-one.net/
+@mickael
+
+* Objectif de l'expérimentation
+
+Nous maintenons des bibliothèques de communication mobile pour le support du protocole XMPP.
+
+Nous devons maintenir une version iOS et une version Android.
+
+Est-il possible de bâtir une bibliothèque unique en Go permettant à des développeurs iOS et Android d'implémenter un client XMPP.
+
+* Utilisation de Go Mobile
+
+Focalisation sur la réalisation d'un framework.
+
+Besoin:
+
+- Capacité de maintenir une connexion réseau
+- Possibilité de passer des données à un handler natif dans la plate-forme
+- Possibilité d'envoyer des messages au serveur XMPP
+- Réutiliser ma bibliothèque XMPP écrite en Go sans (ou avec très peu) de modifications
+
+* Go mobile
+
+Go mobile est un ensemble d'outil pour permettre de construire des applications pour Android et iOS en Go.
+
+L'environnement supporte deux modes:
+
+- création d'applications native, pouvant mélanger du code Go et du code de la plate-forme (Java / ObjC ou Swift)
+- création de SDK
+
+* Création de SDK et de binding
+
+Go permet de créer un binding des modules Go vers la plate-forme native. 
+
+Cela permet d'appeler des méthodes Go depuis Java ou Swift / Objective-C.
+
+Exemple:
+
+.code go-mobile/hello.go
+ 
+* Bibliothèques
+
+À partir de ce code, il est possible de générer:
+
+- une archive .aar qui peut être importée dans un projet Android
+
+    gomobile bind -target=android golang.org/x/mobile/example/bind/hello
+
+- une archive de Framework iOS qui peut être importé au projet iOS
+
+    gomobile bind -target=ios golang.org/x/mobile/example/bind/hello
+
+* Usage
+
+Le code de binding d'exemple peut être utilisé simplement.
+
+Exemple en Objective C:
+
+    #import "hello/Hello.h"  // Gomobile bind generated header file in hello.framework
+    ...
+    textLabel.text = GoHelloGreetings(@"iOS and Gophers");
+
+Exemple en Java:
+
+    import go.hello.Hello;
+    ...
+    String greetings = Hello.Greetings("Android and Gophers"); 
+
+* Création d'une connexion XMPP
+
+Validation de la possibilité de se connecter en XMPP sous forme de daemon:
+
+.code go-mobile/xmpp.go /func.Connect/,/STOP1/
+
+* Résultat
+
+Experimentation concluante:
+
+- Un code réseau en Go a pu se connecter sans modification à un serveur XMPP.
+- Le code fonctionne à l'identique sur Android et iOS
+
+* Limitation
+
+- Taille du SDK généré sur iOS est trop importante: 17.8 MB
+
+=> seulement 5.8 MB sur Android 
+
+- Le retour des messages vers iOS via un Delegate reste encore délicat et pas forcément totalement transparent pour l'utilisateur du SDK.
+
+=> Problème de documentation ?
+
+* Prochaine étape
+
+Valider le SDK par de la communication bidirectionnelle.
+
+Réaliser un client fonctionnel permettant d'envoyer et de recevoir des messages.

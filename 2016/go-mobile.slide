@@ -12,7 +12,7 @@ Nous maintenons des bibliothèques de communication mobile pour le support du pr
 
 Nous devons maintenir une version iOS et une version Android.
 
-Est-il possible de bâtir une bibliothèque unique en Go permettant à des développeurs iOS et Android d'implémenter un client XMPP.
+Est-il possible de bâtir une bibliothèque unique en Go permettant à des développeurs iOS et Android d'implémenter un client XMPP ?
 
 * Utilisation de Go Mobile
 
@@ -77,6 +77,15 @@ Exemple en Java:
 Validation de la possibilité de se connecter en XMPP sous forme de daemon:
 
 .code go-mobile/xmpp.go /func.Connect/,/STOP1/
+
+* Ne pas oublier
+
+Sur Android, nous devons donner à l'application le droit d'utiliser le réseau. C'est le comportement par défaut sur iOS.
+
+Ajoutez cette permission dans la manifest de votre application lorsque vous utilisez le framework:
+
+    <manifest ...>
+        <uses-permission android:name="android.permission.INTERNET" />
 
 * Résultat
 

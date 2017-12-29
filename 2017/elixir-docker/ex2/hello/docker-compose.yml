@@ -1,0 +1,36 @@
+# START BASE OMIT
+version: '3'
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  postgresql:
+    image: "bitnami/postgresql:latest"
+    networks:
+      - app-tier
+    environment:
+      - POSTGRESQL_USERNAME=phoenix
+      - POSTGRESQL_PASSWORD=password123
+      - POSTGRESQL_DATABASE=phoenixdb
+  myapp:
+    image: "parisex2:latest"
+    ports:
+      - 4000
+    networks:
+      - app-tier
+  # START LB OMIT
+  lb:
+    image: dockercloud/haproxy
+    ports:
+      - 80:80
+    links:
+      - myapp
+    networks:
+      - app-tier
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+    environment:
+      - SERVICE_PORTS=4000
+  # END OMIT

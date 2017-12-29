@@ -1,0 +1,175 @@
+Déployer des applications Elixir avec Docker
+
+Mickaël Rémond
+ProcessOne
+mremond@process-one.net
+http://www.process-one.net/
+@mickael
+
+
+# ==============================================================================
+
+* Principes de Docker
+
+- Système de packaging d'applications
+- Plus léger qu'une VM
+: Un seul noyaux Linux. Pas de couche de virtualisation. Principe de la jail ou du chroot
+: Inspiration des Zones Solaris
+- Basé sur les namespaces et les Cgroups du noyaux
+: Les namespaces permettent de déployer des applications sans conflit (port réseaux, etc)
+: en séparant les ressources utilisées dans des namespaces.
+: Les Cgroups permettent de limiter les allocations de ressources.
+- Systèmes de layers et de réutilisation des images
+: Composition
+- Écosytème: bibliothèque d'images et d'outils
+: Docker hub. Docker compose. Swarm. Kubernetes, etc
+: Fournir un package Docker de son application, même open source est devenu un bonne pratique.
+
+* Virtual machine
+
+.image elixir-docker/VM@2x.png _ 600
+
+* Docker
+
+.image elixir-docker/Container@2x.png _ 600
+
+* Exemple de container: Dockerfile
+
+.code elixir-docker/ex1/Dockerfile
+
+: Container créé avec Docker build sur la base d'un fichier Dockerfile
+
+* Exemple de container: Build
+
+.code elixir-docker/ex1/build.bash
+
+* Exemple de container: Exécution
+
+.code elixir-docker/ex1/run.bash
+
+* Principes de création de containers
+
+Les containers sont idéalement le plus *stateless* possibles.
+
+: Même le caractère stateless est de moins en moins vrai grâce aux infrastructures
+: de déploiment de containers type Kubernetes: Il est possible d'attacher des disques
+: persistents.
+
+Ils doivent supporter différents environnements d'exécution.
+
+Ils sont configurables par *variable* *d'environnement*.
+
+* Packager une application Elixir simple
+
+Utilisons une application simple Elixir:
+
+.code elixir-docker/ex2/newapp.bash
+
+Elle peut tourner en local avec l'une des commandes suivantes:
+
+.code elixir-docker/ex2/run.bash
+
+* Packaging Docker
+
+Nous utilisons `distillery` pour packager l'application en ajoutant la dépendance dans `mix.exs`:
+
+.code elixir-docker/ex2/hello/mix.exs /^  defp deps/,/^end/
+
+* Les releases Erlang
+
+`distillery` permet de créer une * release*.
+
+Une release:
+- Package une application Elixir et ses dépendances.
+- Package la VM Erlang et les modules nécessaires pour un environnement dédié (par exemple Linux x86 64 bits).
+
+Le résultat peut être exécuté sur un serveur, dans une VM ou dans un container.
+
+* Build de l'application
+
+.code elixir-docker/ex2/docker-build.bash
+
+* Lancement de l'application dans le container
+
+.code elixir-docker/ex2/docker-run.bash
+
+* Docker compose
+
+Docker Compose permet de tester un environnement local avec des containers pour chaque composant:
+
+- Base de données,
+- Application,
+- Cache,
+- ...
+
+Dans notre cas nous avons seulement une application autonome.
+
+* docker-compose.yml
+
+.code elixir-docker/ex2/hello/docker-compose.yml /START BASE/,/START LB/
+
+* Lancer la stack
+
+.code elixir-docker/ex2/compose-run.bash
+
+* Ajout d'un load balancer
+
+.code elixir-docker/ex2/hello/docker-compose.yml /START LB/,/END/
+
+* Ajouter des workers
+
+.code elixir-docker/ex2/docker-scale.bash
+
+* Fonctionnement du clustering Erlang
+
+.image elixir-docker/erlang-distribution.png _ 600
+
+* Problème pour déployment Docker
+
+1. Les ports de la VM Erlang sont définis aléatoirement.
+
+2. Un ordonnanceur va imposer un ensemble de port précis
+
+Peut-on rendre la VM Erlang plus cloud native ?
+
+* Le clustering Erlang sans epmd
+
+Depuis Erlang/OTP R19 il est possible de remplacer les mécanismes de distribution Erlang pour ne pas utiliser epmd.
+
+Ce principe permet:
+1. de se passer de l'utilisation de epmd.
+2. de gérer son propre mécanisme de découverte du cluster:
+   - d'utiliser un port fixe pour la distribution Erlang
+   - ou bien de se déclarer à un autre annuaire qu'epmd, comme par exemple etcd.
+
+* Parametres de la VM
+
+Le fichier `vm.args` de la release:
+
+.code elixir-docker/ex3/vm_args.txt
+
+* Code remplaçant epmd 1/3
+
+.code elixir-docker/ex3/proto.ex
+
+* Code remplaçant epmd 2/3
+
+.code elixir-docker/ex3/epmd.ex
+
+* Code remplaçant epmd 3/3
+
+.code elixir-docker/ex3/proto_dist.ex
+
+* Lancement du cluster avec Docker compose
+
+.code elixir-docker/ex3/compose.bash
+
+* Prochaines étapes
+
+Enregistrement des noeuds du cluster et des ports dans un outil de configuration distribué (type etcd / Zookeeper)
+
+* A explorer
+
+.link https://github.com/Recruitee/mix_docker
+.link https://github.com/mremond/twelve
+.link https://www.erlang-solutions.com/blog/erlang-and-elixir-distribution-without-epmd.html

@@ -17,6 +17,8 @@ It is:
 - A protocol designed for the Internet of Thing in 1999 by *Andy*Stanford-Clark* and *Arlen*Nipper*
 - A standard maintained by [[https://www.oasis-open.org/][OASIS]]
 
+: I have recently been working a lot of the MQTT protocol. 
+
 * Design goal
 
 Addressing challenges to handle massive amount of diverse IoT devices, focusing on:
@@ -53,7 +55,7 @@ They are leveraged through few commands exposed to the client:
 
 * Topics
 
-- They are use to identify publication "channels"
+- They are used to identify publication "channels"
 - They are hierarchical: _mytopics/metrics_
 - They support wildcard for subscriptions: _mytopics/*_
 

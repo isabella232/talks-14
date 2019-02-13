@@ -72,6 +72,7 @@ Three QOS based on your message delivery constraints:
 MQTT 5 introduces extra features to expand use cases:
 
 - Flexibility through user properties
+: You can encrypt the payload but still add metadata that can be handle client side or server side by plugins.
 - Shared subscriptions
 : This is used to load balance messages across clients.
 - Session and message expiry

@@ -1,0 +1,128 @@
+Introduction to MQTT
+
+Mickaël Rémond
+ProcessOne
+mremond@process-one.net
+https://www.process-one.net/
+@mickael
+
+# ==============================================================================
+
+* What is MQTT?
+
+[[http://mqtt.org/][MQTT]] stands for _Message_Queuing_Telemetry_Transport_
+
+It is:
+
+- A protocol designed for the Internet of Thing in 1999 by *Andy*Stanford-Clark* and *Arlen*Nipper*
+- A standard maintained by [[https://www.oasis-open.org/][OASIS]]
+
+* Design goal
+
+Addressing challenges to handle massive amount of diverse IoT devices, focusing on:
+
+- Low bandwidth
+: Binary protocol to limit content to send
+- Ease of implementation in basic devices
+: No complex parsing
+- Minimal overhead
+: Connected protocol with simple negotiation and no need to repeat the context.
+- Support for unrealiable networks
+: Message reliability must be built into the protocol
+
+* Main features
+
+MQTT focuses on:
+
+- Publish and Subscribe: It decouples data producers and consumers
+- Flexible message reliability constraints: It provides various Quality of Service levels
+- Simple presence system: This is handled through will & testament when session disappear (on/off status)
+
+* Building blocks
+
+- Topics
+- Subscriptions
+- Session
+
+They are leveraged through few commands exposed to the client:
+
+- Connect
+- Publish
+- Subscribe
+- Disconnect
+
+* Topics
+
+- They are use to identify publication "channels"
+- They are hierarchical: _mytopics/metrics_
+- They support wildcard for subscriptions: _mytopics/*_
+
+* Quality of service
+
+Configurable behaviour based on your application requirements.
+
+Three QOS based on your message delivery constraints:
+
+- 0: At most once
+- 1: At least once
+- 2: Exactly once
+
+* MQTT 5
+
+MQTT 5 introduces extra features to expand use cases:
+
+- Flexibility through user properties
+- Shared subscriptions
+: This is used to load balance messages across clients.
+- Session and message expiry
+- Better error management with explicit error codes
+- Various optimizations for specific workflows
+: For example, you do not have to repeat the topic if publishing to the same topic.
+
+* Building an MQTT service
+
+MQTT is a transport layer: You need an application protocol on top of it
+
+To build a full featured real time service on top of MQTT you need:
+
+- Design a topics hierarchy, along with usage convention
+- Enforce security of topics for that usage through flexible ACL rules
+: Who can see what
+- Write plugin to customize the behaviour of publish & subscribe on those topics based on your convention.
+
+* Security
+
+It is handled with various protocol level mechanisms:
+
+- authentication: username/password or certificate-based
+- TLS encryption
+- Optional payload encryption
+
+You need however to take into account corner cases of the specification.
+
+For example, client id need to be considered unique in the context of a given client to be usable safely.
+
+Behaviour, Access Control List (ACL) need to be part of your application protocol design and enforced through plugins.
+
+Do not blindly put a raw MQTT service in production, as you could put your users at risk.
+
+* Use cases
+
+Use cases are now far broader than IoT.
+
+MQTT is used in:
+
+- Internet of Things
+- Gaming
+- Application integration
+- Mobile chat
+- Real-time web
+: With MQTT over Websockets
+
+* Conclusion
+
+MQTT is lightweight and flexible.
+
+It is however low level and does not handle out of the box all your application needs.
+
+To leverage MQTT you need to design your application protocol on top of it, to make the most of it.

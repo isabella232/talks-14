@@ -17,7 +17,8 @@ It is:
 - A protocol designed for the Internet of Thing in 1999 by *Andy*Stanford-Clark* and *Arlen*Nipper*
 - A standard maintained by [[https://www.oasis-open.org/][OASIS]]
 
-: I have recently been working a lot of the MQTT protocol. 
+: I have recently been working a lot of the MQTT protocol, with the launch of MQTT support of in ejabberd and in our Fluux.IO platform.
+: That protocol is often compared to XMPP, but the comparison is often wrong. It 
 
 * Design goal
 
@@ -113,9 +114,10 @@ MQTT is used in:
 
 MQTT is lightweight and flexible.
 
+: MQTT is a lower level protocol than XMPP, which comes with ready made support for a large set of use cases (for chat, mobile, etc).
+
 It is however low level and does not handle out of the box all your application needs.
 
 To leverage MQTT, you need to design your application protocol on top of it, to make the most of it.
 
 MQTT is a foundation layer for more complex applications.
-

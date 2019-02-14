@@ -17,8 +17,10 @@ It is:
 - A protocol designed for the Internet of Thing in 1999 by *Andy*Stanford-Clark* and *Arlen*Nipper*
 - A standard maintained by [[https://www.oasis-open.org/][OASIS]]
 
-: I have recently been working a lot of the MQTT protocol, with the launch of MQTT support of in ejabberd and in our Fluux.IO platform.
-: That protocol is often compared to XMPP, but the comparison is often wrong. It 
+: Hello Everyone!
+: After a very long pause, it feels good to be back to recording another IoT Studio video.
+: I have recently been working a lot of the MQTT protocol, with the launch of MQTT support in ejabberd and in our Fluux.IO platform.
+: That protocol is often compared to XMPP, but the comparison is often wrong. MQTT is really a tool that plays a very different level, to cover very different needs.
 
 * Design goal
 

@@ -96,19 +96,6 @@ Behaviour, Access Control List (ACL) need to be part of your application protoco
 
 Do not blindly put a raw MQTT service in production, as you could put your users at risk.
 
-* MQTT 5
-
-MQTT 5 introduces extra features to expand use cases:
-
-- Flexibility through user properties
-: You can encrypt the payload but still add metadata that can be handle client side or server side by plugins.
-- Shared subscriptions
-: This is used to load balance messages across clients.
-- Session and message expiry
-- Better error management with explicit error codes
-- Various optimizations for specific workflows
-: For example, you do not have to repeat the topic if publishing to the same topic.
-
 * Use cases
 
 Use cases are now far broader than IoT.
@@ -128,4 +115,7 @@ MQTT is lightweight and flexible.
 
 It is however low level and does not handle out of the box all your application needs.
 
-To leverage MQTT you need to design your application protocol on top of it, to make the most of it.
+To leverage MQTT, you need to design your application protocol on top of it, to make the most of it.
+
+MQTT is a foundation layer for more complex applications.
+

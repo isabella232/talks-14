@@ -1,0 +1,12 @@
+* MQTT 5
+
+MQTT 5 introduces extra features to expand use cases:
+
+- Flexibility through user properties
+: You can encrypt the payload but still add metadata that can be handle client side or server side by plugins.
+- Shared subscriptions
+: This is used to load balance messages across clients.
+- Session and message expiry
+- Better error management with explicit error codes
+- Various optimizations for specific workflows
+: For example, you do not have to repeat the topic if publishing to the same topic.
